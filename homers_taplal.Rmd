@@ -1,0 +1,268 @@
+---
+title: "Krosszkulturális jelentés"
+author: "Stefanik Fanni"
+date: "`r format(Sys.Date(),'%Y. %B %e.')`"
+output:
+  html_document: 
+      theme: flatly
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, error = FALSE, message = FALSE)
+```
+# A hőmérséklet bejósolhatósága és a fő táplálékforrás összefüggése
+### Jobban támaszkodnak-e a a mezőgazdaságból származó növényi táplálékra a biztosabban bejósolható éghajlaton élő emberek, mint a gyűjtögetésre?
+
+A legtöbben ma is főként háziasított állatoktól származó és növényekből előállított élelmiszerekből táplálkozunk. Még az olyan „vadon fellelhető” élelmiszerek, mint a halak, homárok és gombák is gyakran tenyésztett élelmiszerek. Az ember, mint faj státusza nagyban az élelmiszertermelésen múlik. A vadászat és a teljes egészében vadon élő állatokból való gyűjtögetés még a világ jelenlegi népességének parányi töredékét sem tudná eltartani. (Bellwood, 2005) Általánosan elfogadott tény, hogy az élelmiszertermeléshez vezető utak a világ különböző pontjain nagymértékben eltérnek egymástól. A gazdagság és a politikai hatalom mai globális eloszlása tükrözheti a korai élelmiszertermelés jellemzőinek és időzítésének eltéréseit. (Marshall & Hildebrand, 2002) A mezőgazdaság demográfiai potenciálja a vadászattal és gyűjtögetéssel szemben döntő fontosságú tényező. Míg egy vadászó és gyűjtögető családnak több négyzetkilométernyi területre van szüksége a megélhetéshez, addig egy átlagos váltóművelő család néhány hektár termőfölddel is beéri. Egy öntözéses gazdálkodást folytató család általában kevesebb, mint egy hektárral. Így a termelés fokozódó skáláján egyre kevesebb földterületre van szükség egy átlagos egység, például egy család vagy egy egyén élelmezéséhez. (Bellwood, 2005) A növények egyszerre alkalmazkodnak az éghajlathoz, a talajhoz, a domborzathoz, valamint a természetes és antropogén tényezőkhöz. Amikor e változók bármelyike megváltozik, a növényközösségek kompetitív egyensúlya megváltozik, és a növényzet összetétele ennek megfelelően módosul. (McCorriston & Hole 1991) A világon legalább 10 különböző hely van, ahol a mezőgazdaságot egymástól teljesen függetlenűl fejlesztették ki. (Price & Bar-Yosef, 2011) Körülbelül 10 000 évvel ezelőtt az emberek elkezdtek növényeket ültetni ott, ahol a vadon élő ősi fajok két évezred alatt elszaporodtak. A háziasítás lendületét többek között az antropogén környezeti változások, a technológiai változások, a társadalmi innováció hatásai és nagyrészt az éghajlati változások adták. (McCorriston & Hole 1991) Az éghajlat holocén kori javulásával a maihoz hasonló feltételekhez - ez a gyors változás körülbelül 11 500 évvel ezelőtt következett be - a világ éghajlata melegebbé, csapadékosabbá és rövid távon sokkal megbízhatóbbá vált. Ez a megbízhatóság adta meg a földművelés korai előnyét. (Bellwood, 2005) A táplálkozás, a fajok elterjedési területe és a diverzitás földrajzi mintázatai közötti lehetséges összefüggéseket számos faj esetében vizsgálták. Emellett bizonyos biogeográfusok szerint a környezeti termelékenység és stabilitás meghatározhatják a táplálkozást. (Gavin et al., 2018)
+
+### Hipotézisek
+Mindezek alapján a hipotéziseim, hogy azokon a területeken ahol a hőmérséklet jobban bejósolható, az emberek nagyobb százalékban támaszkodnak a mezőgazdaságból származó növényekre táplálkozáskor. Ebből következően továbbá feltételezem, hogy azokon a területeken, ahol az időjárást kevésbé hatékonyan lehet  előrejelezni, ott az emberek főleg a gyűjtögetést részesítik előnyben a növényi alapú táplálék szempontjából.
+```{r header}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+BIN_data = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/Binford/data.csv')
+BIN_societies = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/Binford/societies.csv')
+BIN_variables = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/Binford/variables.csv')
+BIN_codes = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/Binford/codes.csv')
+EA_data = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/data.csv')
+EA_societies = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/societies.csv')
+EA_variables = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/variables.csv')
+EA_codes = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/codes.csv')
+EA_data = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/data.csv')
+EA_societies = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/societies.csv')
+EA_variables = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/variables.csv')
+EA_codes = read.csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/EA/codes.csv')
+eco_data = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/ecoClimate/data.csv')
+eco_var = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/datasets/ecoClimate/variables.csv')
+location = read_csv('https://raw.githubusercontent.com/D-PLACE/dplace-data/master/legacy/society_locations.csv')
+```
+
+```{r,echo = FALSE}
+BIN_data = BIN_data %>% 
+  select(soc_id,var_id,code)
+BIN_societies = BIN_societies %>% 
+  select(id,pref_name_for_society,glottocode,Lat,Long)
+BIN_variables = BIN_variables %>% 
+  select(id,category,title,definition) 
+
+EA_data = EA_data %>% 
+  select(soc_id,var_id,code)
+EA_societies = EA_societies %>% 
+  select(id,pref_name_for_society,glottocode,Lat,Long)
+EA_variables = EA_variables %>% 
+  select(id,category,title,definition)
+
+eco_data = eco_data %>% 
+  select(soc_id,var_id,code)
+eco_var = eco_var %>% 
+  select(id,category,title,definition)
+location = location %>% 
+  select(soc_id,region)
+```
+
+```{r,echo = FALSE}
+EA_societies = EA_societies %>% 
+  rename(soc_id = id)
+EA_variables = EA_variables %>% 
+  rename(var_id = id)
+EA_variables = EA_variables %>% 
+  rename(ea_def = definition)
+EA_codes = EA_codes %>% 
+  rename(ea_desc = description)
+BIN_societies = BIN_societies %>% 
+  rename(soc_id = id)
+BIN_variables = BIN_variables %>% 
+  rename(var_id = id)
+eco_var = eco_var %>% 
+  rename(var_id = id)
+```
+
+```{r,echo = FALSE}
+BIN_long = left_join(BIN_data,BIN_variables)
+BIN_long = left_join(BIN_long,BIN_societies)
+BIN_long = left_join(BIN_long,BIN_codes)
+BIN_long = left_join(BIN_long,location)
+
+EA_long = left_join(EA_data,EA_variables)
+EA_long = left_join(EA_long,EA_societies)
+EA_long = left_join(EA_long,EA_codes)
+
+Eco_long = left_join(eco_data,eco_var)
+
+EA_long$ea_id <- EA_long$var_id
+EA_long$ea_code <- EA_long$code
+EA_long = EA_long %>% 
+  select(ea_code, ea_id, glottocode,ea_def,ea_desc)
+Eco_long$eco_id <- Eco_long$var_id
+Eco_long$eco_code <- Eco_long$code
+Eco_long = Eco_long %>% 
+  select(soc_id, eco_id, eco_code)
+
+all_long = left_join(BIN_long, EA_long)
+all_long = left_join(all_long,Eco_long)
+```
+
+```{r,echo = FALSE}
+gatherers = all_long %>% 
+  filter(
+        ea_code > 0,
+         ea_id == c("EA001"),
+         eco_id == "TemperaturePredictability")
+
+agri = all_long %>% 
+  filter(
+    ea_code > 0,
+    ea_id == c("EA005"),
+    eco_id == "TemperaturePredictability")
+```
+### A különböző társadalmak elhelyezkedése  
+Az elemzésben szereplő társadalmak, étkezési szokások és éghajlati tényezők a [Dplace adatiból](https://github.com/D-PLACE/dplace-data/tree/master) származnak. (Kirby et al., 2016) Az alábbi térképen látható a földrajzi elhelyezkedése azoknak a csoportoknak, amelyek a gyűjtögetésre vagy a mezőgazdaságra támaszkodnak a növényi alapú táplálékuk tekintetében.
+
+```{r, echo = FALSE,  fig.align = 'center'}
+gatherers <- gatherers %>%
+  mutate(Típus = "Gyűjtögetők")
+
+agri <- agri %>%
+  mutate(Típus = "Mezőgazdaság")
+
+combined_data <- bind_rows(gatherers, agri)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+ggplot(data = world) +
+  geom_sf() +
+  geom_point(data = combined_data, aes(x = Long, y = Lat, color = Típus), size = 0.5) +
+  scale_color_manual(values = c("Gyűjtögetők" = "blue", "Mezőgazdaság" = "red")) +
+  theme_void() +
+  labs(title = "Az elemzésben szereplő társadalmak elhelyezkedése",
+       color = "Típus",
+       x = "Hosszúság",
+       y = "Szélesség")
+```
+
+### Gyűjtögetés
+A gyűjtögetés a hagyományos kifejezés a föld „természetes terméséből” való megélhetésre, a vadon termő gyökerek, gyümölcsök és bogyók gyűjtése vagy a méhek mézének gyűjtése révén, szemben a földműveléssel élelmiszertermeléssel. A gyűjtögető társadalmak alatt a néprajzkutatók azokat a mai őslakosokat értik, akik részben vagy egészben ilyen tevékenységet folytatnak. (Bird-David, 2015) Az elemzésben szereplő társadalmak az alábbi módon oszlanak el az alapján, hogy milyen százalékban támaszkodnak a gyűjtögetésre, más élélemszerizési módokhoz képest. Az oszlopok tetején látható, hogy egy-egy kategóriába hány csoport tartozik.
+
+```{r, echo = FALSE, fig.align = 'center'}
+gatherers$ea_code <- as.character(gatherers$ea_code)
+gatherers %>% 
+  ggplot(aes(x = ea_code)) +
+  geom_bar(stat = "count") +
+  theme_classic() +
+  labs(x = "Gyűjtögetés mértéke", y = "Társadalmak száma") +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5, size = 5)
+```
+
+Az alábbi táblázatban látható, hogy a különböző kategóriába tartozó csoportok hány százalékban támaszkodnak a gyűjtögetésre.
+
+|     Kód   |Hány %-ban támaszkodik az adott csoport a táplálékszerzés ezen formájára  | 
+|:---------:|:------------------------------------------------------------------------:|
+|     1     |                            6-15                                          | 
+|     2     |                            16-25                                         | 
+|     3     |                            26-35                                         | 
+|     4     |                            36-45                                         | 
+|     5     |                            46-55                                         | 
+|     6     |                            56-65                                         | 
+|     7     |                            66-75                                         | 
+|     8     |                            76-85                                         | 
+
+
+
+### Mezőgazdaság
+A mezőgazdaság jelentősége a történelemben abban áll, hogy kulcsszerepet játszott az emberi népesség elmúlt 10 000 éves növekedésének, sőt, az általunk ismert civilizációnak is. (Bellwood, 2005) A növényi alapú mezőgazdaságra összpontosító önellátás azonban nem terjedt el általánosan. Még a közelmúltban is, több száz társadalom tartotta fenn a gyűjtögetést, mint elsődleges megélhetési módot. (Gavin et al., 2018) Itt megfigyelhető, a különböző mezőgazdasági kategóriákhoz tartozó csoportok eloszlása. Az oszlopok tetején látható, hogy egy-egy kategóriába hány csoport tartozik.
+
+```{r, fig.align = 'center'}
+agri$ea_code <- as.character(agri$ea_code)
+agri %>% 
+  ggplot(aes(x = ea_code)) +
+  geom_bar(stat = "count") +
+  theme_classic() +
+  labs(x = "Mezőgazdasági tevékenység mértéke", y = "Társadalmak száma") +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5, size = 5)
+```
+
+|     Kód   |Hány %-ban támaszkodik az adott csoport a táplálékszerzés ezen formájára  | 
+|:---------:|:------------------------------------------------------------------------:|
+|     1     |                            6-15                                          | 
+|     2     |                            16-25                                         | 
+|     4     |                            36-45                                         | 
+|     9     |                            86-100                                        | 
+
+
+### Hőmérséklet
+A hőmérséklet változót egy 0-tól 1-ig terjedő skálán mérték. A minél nagyobb az érték, annál jobban lehet az adott terület hőmérsékletét megjósolni.
+
+### Gyűjtögetés és a hőmérséklet bejósolhatósága
+Az alábbi ábra a hőmérséklet bejósolhatóságának összefüggését mutatja a gyűjtögetési szokásokkal. A fent említett szakirodalmak alapján azt vártam, hogy minél jobban bejósolható a hőmérséklet egy adott területen, annál kevésbé lesz rá jellemző a gyűjtögetéssel szerzett növényi táplálék. Ennek ellenére a grafikonon azt láthajuk, hogy azokon a helyeken, ahol a legkevésbé megbízható predikciókat lehet tenni a hőmérséklet alakulására, a gyűjtögetés mindössze 6-15%-ban határozza meg a táplálékszerzést. Sőt a megbízhatóság növekedésével egyre inkább hagyatkoznak a különböző csoportok a gyűjtögetésre.
+
+```{r, fig.align = 'center'}
+ggplot(gatherers, aes(x = factor(ea_code), y = eco_code, group = ea_code)) +
+  geom_boxplot() +
+  labs(x = "Gyűjtögetés mértéke", y = "Hőmérséklet bejósolhatósága") +
+  theme_classic() 
+```
+
+### Mezőgazdaság és a hőmérséklet bejósolhatósága
+Mivel a megbízható időjárási körülmények összefüggnek a mezőgazdasági tevékenységek elterjedésével azt feltételeztem, hogy a nagyobb bizonyosággal bejósolható hőmérséklettel rendelkező régiókon élő emberek nagyobb százalékban támaszkodnak a mezőgazdaságból származó növényi táplálékra, mint a más forrásokból származókra. Bár az alábbi ábrán látható, hogy a legjobban bejójolható terleten élő csoport hagyatkozik leginkább a mezőgazdaságból származó növényi táplálékra, a kategóriába eső alacsony elemszám (48) miatt messzemenő következtetéseket nem vonhatnunk le. Azt azonban egyértelműen megállapíthatjuk, hogy a kevésbé megbízható hőmérsékleti előrejelzésekkel bíró területeken élő emberek csak elhanyagolható mértékben (6-15%) támaszkodnak a mezőgazdaságra. 
+
+```{r, fig.align = 'center'}
+ggplot(agri, aes(x = factor(ea_code), y = eco_code, group = ea_code)) +
+  geom_boxplot() +
+  labs(x = "Mezőgazdasági tevékenység mértéke", y = "Hőmérséklet bejósolhatósága") +
+  theme_classic() 
+```
+
+
+### Összegzés
+A vadon fellelhető zöldségek és gyümölcsök gyűjtögetéséről való átállás a mezőgazdasági termelésre jelentős változásokat hozott az ember életébe. Kisebb területen lényegesen több élelmiszer előállítása vált így lehetővé. (Bellwood, 2005) Ez a folyamat azonban nem egységesen zajlott/zajlik le a világ különböző tájain. (Marshall & Hildebrand, 2002) Az éghajlati eltérések összefüggést mutatnak azzal, hogy adott területeken milyen jellegű táplálékszerzési módszereket használnak az emberek. (Gavin et. al, 2018) Az időjárás megbízhatóságának következtében, az emberek nagyobb valószínűséggel kezdenek mezőgazdálodásba. (Bellwood, 2005) Elemzésemben azt vizsgáltam, hogy a hőmérséklet megbízható predikciója milyen kapcsolatot mutat a különböző társadalmak növényi alapú táplálékszerzésével kapcsolatban. Feltételezésem, miszerint a kevésbe bejósolható területeken élő csoportok inkább a gyűjtögetést használják fő forrásukkénk, a felhasznált adatok alapján nem bizonyult helytállónak. Habár azon területek lakosai, akik jól bejósolható éghajlaton élnek valóban jelentős százalékban (86-100) a mezőgazdaságban előállított növényekből táplálkoznak, alacsony számuk miatt szintén marginális jelentőséggel bírnak. Ami azonban világosan látszik az eredményekből, hogy a nem megbízhatóan bejósolható területek lakosai nem támaszkodnak mezőgazdasági termelésre. Bár az itt felsoroltak részleg ellent mondanak a fent említett szakirodalmaknak, fontos figyelembe venni, hogy a mind a mezőgazdálkodás kialakulása, mind pedig a gyűjtögetés komplex jelenségek, melyek pusztán egy változó függésében nehezen vizsgálhatóak. Nem elhanyagolható társadalmi és történelmi tényezők szerepe sem a megélhetési szokások alakításában. (Gavin et. al, 2018) Szintén fontosnak tartom még kiemelni a felhasznált adatok pár releváns jellegzetességét. Alapvetően sokkal kevesebb adat tartozott a mezőgazdaság csoporthoz, ezek lényegesen kevesebb kategóriát is fedtek le. Így az alacsony elemszám következtében bizonyos kategóriák szinte elhanyagolhatóak. Az alábbiakban látható egy ábra a két változó egymáshoz viszonyított eloszlásáról.
+
+
+```{r, fig.align = 'center'}
+common_columns <- intersect(names(gatherers), names(agri))
+gatherers <- gatherers[, common_columns]
+agri <- agri[, common_columns]
+gatherers$csoport <- "Gyűjtögetés"
+agri$csoport <- "Mezőgazdaság"
+combined_data <- rbind(gatherers, agri)
+ggplot(combined_data, aes(x = factor(ea_code), fill = csoport)) +
+  geom_bar(position = "dodge") +
+  labs(x = "Hány %-ban támaszkodik az adott csoport a táplálékszerzés különböző formáira", 
+       y = "Csoportok száma", 
+       title = "Gyűjtögetés és Mezőgazdaság") +
+  theme_classic() +
+  scale_fill_manual(values = c("Gyűjtögetés" = "blue", "Mezőgazdaság" = "red"))
+```
+
+
+|     Kód   |Hány %-ban támaszkodik az adott csoport a táplálékszerzés ezen formájára  | 
+|:---------:|:------------------------------------------------------------------------:|
+|     1     |                            6-15                                          | 
+|     2     |                            16-25                                         | 
+|     3     |                            26-35                                         | 
+|     4     |                            36-45                                         | 
+|     5     |                            46-55                                         | 
+|     6     |                            56-65                                         | 
+|     7     |                            66-75                                         | 
+|     8     |                            76-85                                         | 
+|     9     |                            86-100                                        | 
+
+
+
+### Bibliográfia
+
+-	Barry, H. (1980). Ethnographic Atlas XXVIII. Ethnology 19(2): 245-263.
+-	Bellwood, P. (2005). First farmers: the origins of agricultural societies. Blackwell Publishing
+-	Binford, L. R. (2001). Constructing frames of reference: an analytical method for archaeological theory building using ethnographic and environmental data sets. Univ of California Press.
+- Bird-David, N. (2015). Hunting and gathering societies: anthropology. International Encyclopedia of the Social & Behavioral Sciences., 428-431.
+-Gavin, M. C., Kavanagh, P. H., Haynie, H. J., Bowern, C., Ember, C. R., Gray, R. D., Jordan, F. M., Kirby, K. R., Kushnick, G., Low, B. S., Vilela, B., & Botero, C. A. (2018). The global geography of human subsistence. Royal Society open science, 5(9), 171897. https://doi.org/10.1098/rsos.171897
+-	Kathryn R. Kirby, Russell D. Gray, Simon J. Greenhill, Fiona M. Jordan, Stephanie Gomes-Ng, Hans-Jörg Bibiko, Damián E. Blasi, Carlos A. Botero, Claire Bowern, Carol R. Ember, Dan Leehr, Bobbi S. Low, Joe McCarter, William Divale, and Michael C. Gavin. (2016). D-PLACE: A Global Database of Cultural, Linguistic and Environmental Diversity. PLoS ONE, 11(7): e0158391. doi:10.1371/journal.pone.0158391.
+-	Lima-Ribeiro, M. S., Varela, S., González-Hernández, J., de Oliveira, G., Diniz-Filho, J. A. F., & Terribile, L. C. (2015). EcoClimate: a database of climate data from multiple models for past, present, and future for macroecologists and biogeographers. Biodiversity Informatics, 10. https://doi.org/10.17161/bi.v10i0.4955
+-	Marshall, F., & Hildebrand, E. (2002). Journal of World Prehistory, 16(2), 99–143. doi:10.1023/a:1019954903395
+-	McCorriston, J., & Hole, F. (1991). The Ecology of Seasonal Stress and the Origins of Agriculture in the Near East. American Anthropologist, 93(1), 46–69. doi:10.1525/aa.1991.93.1.02a00030
+-	Price, T. D., & Bar-Yosef, O. (2011). The Origins of Agriculture: New Data, New Ideas: An Introduction to Supplement 4. Current Anthropology, 52(S4), S163–S174. https://doi.org/10.1086/659964
